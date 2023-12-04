@@ -11,13 +11,9 @@ fn main() {
 
     temp_scale = temp_scale.trim().to_lowercase();
 
-    let other_temp_scale;
-
     let scale = if temp_scale == "celsius" {
-        other_temp_scale = "fahrenheit".to_string();
         TemperatureScale::Celsius
     } else if temp_scale == "fahrenheit" {
-        other_temp_scale = "celsius".to_string();
         TemperatureScale::Fahrenheit
     } else {
         return println!("Please input either Celsius or Fahrenheit!");
@@ -36,20 +32,24 @@ fn main() {
         Err(err) => return println!("{err}"),
     };
 
-    println!(
-        "From {degrees} degrees in {temp_scale}, to {} in {other_temp_scale}",
-        convert(scale, degrees)
-    );
-}
+    let conversion = TemperatureScale::convert(&scale, degrees);
 
-fn convert(scale: TemperatureScale, degrees: i32) -> i32 {
-    match scale {
-        TemperatureScale::Celsius => (degrees * 9 / 5) + 32,
-        TemperatureScale::Fahrenheit => (degrees - 32) * 5 / 9,
-    }
+    println!(
+        "From {degrees} degrees in {temp_scale}, to {} degrees in {}",
+        conversion.0, conversion.1
+    );
 }
 
 enum TemperatureScale {
     Celsius,
     Fahrenheit,
+}
+
+impl TemperatureScale {
+    fn convert(&self, degrees: i32) -> (i32, String) {
+        match self {
+            TemperatureScale::Celsius => ((degrees * 9 / 5) + 32, String::from("fahrenheit")),
+            TemperatureScale::Fahrenheit => ((degrees - 32) * 5 / 9, String::from("celsius")),
+        }
+    }
 }
